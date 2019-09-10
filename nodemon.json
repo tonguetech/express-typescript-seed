@@ -1,0 +1,7 @@
+{
+    "watch": ["."],
+    "ext": "ts",
+    "ignore": ["*.test.ts"],
+    "delay": "3",
+    "exec": "ts-node src/index.ts"
+  }

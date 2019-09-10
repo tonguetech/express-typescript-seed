@@ -1,0 +1,17 @@
+jwt:
+  secret: uytrFS.b6|,4bzMgx/_4\'qOf/oYfr\'3(1MatdD#J]j#Bap`no,%qUDh$e7cQH/xM8@4xATtEg&z04iAm7^y?-?m%Mi\\0Af4\\kxJ=e+jcg9mA-@q@$c["3oRk
+  expireTime: 1209600
+  algorithem: HS512
+
+mailer:
+  host: 'localhost'
+  port: 1025
+  username: ''
+  password: ''
+  fromAddress: 'cs@open-fact.com'
+  sendEmail: false
+
+mongodb:
+  host: 'localhost'
+  port: 27017
+  dbName: 'testdb'

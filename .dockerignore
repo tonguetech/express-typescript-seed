@@ -1,0 +1,5 @@
+node_modules
+openfact-prisma
+.git
+yarn-error.log
+yarn.lock
