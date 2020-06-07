@@ -1,7 +1,6 @@
-import * as util from 'util';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
-import { createClient, GoogleMapsClient } from '@google/maps';
+import { GoogleMapsClientWithPromise, createClient } from '@google/maps';
 import { YamlConfig } from '../../services/yaml';
 import { TYPES } from '../../constants';
 
@@ -14,7 +13,7 @@ export interface LagLngResponse {
 @injectable()
 export class GoogleMapService {
 
-    private googleApiClient: GoogleMapsClient;
+    private googleApiClient: GoogleMapsClientWithPromise;
     private logger: Logger;
 
     public constructor(

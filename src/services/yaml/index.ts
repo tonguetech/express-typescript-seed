@@ -46,7 +46,7 @@ export interface YamlConfig {
 export interface JwtConfig {
   secret: string,
   expireTime: number,
-  algorithem: string,
+  algorithem: 'HS256' | 'HS384' | 'HS512' | 'RS256' | 'RS384' | 'RS512' | 'ES256' | 'ES384' | 'ES512' | 'PS256' | 'PS384' | 'PS512' | 'none' | undefined,
 }
 
 export interface MailerConfig {

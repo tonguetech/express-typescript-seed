@@ -1,8 +1,4 @@
-export interface ErrorDescription {
-    status: number;
-    code: ErrorCode;
-    description?: string;
-}
+import { Document, Schema, Model, model } from "mongoose";
 
 export type ErrorCode =
   | "ERR_AUTH_FAILED"
@@ -22,3 +18,18 @@ export type ErrorCode =
   | "ERR_INVALID_PAYMENT_METHOD"
   | "ERR_CODE_NOT_PERSISTED_TO_DATABASE"
   | "ERR_UNKNOWN";
+
+export interface IErrorDescription extends Document {
+  status: number;
+  code: ErrorCode;
+  description?: string;
+}
+
+const errorDescriptionSchema: Schema = new Schema({
+  status: { type: Number, required: true },
+  code: { type: String, required: true, unique: true },
+  description: { type: String, required: true }
+});
+
+const ErrorDescription: Model<IErrorDescription> = model('ErrorDescription', errorDescriptionSchema);
+export default ErrorDescription;

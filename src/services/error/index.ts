@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
 import { TYPES } from '../../constants';
-import { ErrorDescription, ErrorCode } from '../../express/models/error';
-import { ErrorDescriptionRepository } from '../../repository/error';
+import { IErrorDescription, ErrorCode } from '../../express/models/error';
+import { ErrorDescriptionRepository } from '../../express/repository/error';
 
 interface ErrorResponse {
     readonly status: number,
@@ -58,7 +58,7 @@ export class ErrorHandlerService {
         }
     }
 
-    private async getErrorDescription(error: Error): Promise<ErrorDescription | null> {
+    private async getErrorDescription(error: Error): Promise<IErrorDescription | null> {
         switch (error.message) {
             case 'ERR_AUTH_FAILED':
                 return await this.errorRepo.findErrorByCode('ERR_AUTH_FAILED');
@@ -91,7 +91,7 @@ export class ErrorHandlerService {
             case 'ERR_INVALID_PAYMENT_METHOD':
                 return await this.errorRepo.findErrorByCode('ERR_INVALID_PAYMENT_METHOD');
             default:
-                return <ErrorDescription>{
+                return <IErrorDescription>{
                     id: '',
                     status: 500,
                     code: 'ERR_UNKNOWN',

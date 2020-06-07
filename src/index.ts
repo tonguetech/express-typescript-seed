@@ -11,8 +11,8 @@ import * as bodyParser from 'body-parser';
 // import the middleware
 import { AuthMiddleware } from './express/middleware';
 // import the DAO class
-import { UserRepository } from './repository/user';
-import { ErrorDescriptionRepository } from './repository/error';
+import { UserRepository } from './express/repository/user';
+import { ErrorDescriptionRepository } from './express/repository/error';
 // import other services
 import { Config, YamlConfig } from './services/yaml';
 import { DateTimeService } from './services/datetime';
@@ -76,7 +76,7 @@ const logger: Logger = createLogger(<LoggerOptions>{
 
     // configure mongodb and connect to it
     const mongodb = container.get<MongoDbService>(TYPES.MongoDbService);
-    await mongodb.connect()
+    await mongodb.connectDb()
     // configure PassportJS config and start the create user loop
     const passportConfig = container.get<PassportService>(TYPES.PassportService);
     passportConfig.init()
