@@ -1,8 +1,8 @@
 import { inject } from 'inversify';
 import { Response } from 'express';
 import { controller, httpGet, httpPost, httpPut, httpDelete, response, requestBody, requestParam } from 'inversify-express-utils';
-import { ErrorDescription } from '../../models/error';
-import { ErrorDescriptionRepository } from '../../../repository/error';
+import { IErrorDescription } from '../../models/error';
+import { ErrorDescriptionRepository } from '../../repository/error';
 import { TYPES } from '../../../constants';
 
 
@@ -28,7 +28,7 @@ export class ErrorDescriptionController {
     @httpPost('/')
     public async createError(
         @response() res: Response,
-        @requestBody() errorDto: ErrorDescription): Promise<Response>
+        @requestBody() errorDto: IErrorDescription): Promise<Response>
     {
         const error = await this.errorRepo.createError(errorDto);
         return res.send(error);
@@ -37,7 +37,7 @@ export class ErrorDescriptionController {
     @httpPut('/:id')
     public async updateError(
         @requestParam('id') id: string,
-        @requestBody() errorDto: ErrorDescription,
+        @requestBody() errorDto: IErrorDescription,
         @response() res: Response): Promise<Response>
     {
         const error = await this.errorRepo.updateErrorById(id, errorDto);

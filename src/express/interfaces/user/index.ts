@@ -1,6 +1,6 @@
 import { Request } from 'express';
-import { User } from '../../../prisma'
+import { IUser } from '../../../express/models/user'
 
 export interface IUserRequest extends Request {
-    user: User
+    user: IUser
 }

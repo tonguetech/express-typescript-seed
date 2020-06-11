@@ -3,7 +3,7 @@ import { inject } from 'inversify';
 import { Request, Response, NextFunction } from 'express';
 import { controller, httpGet, httpPost, httpPut, httpDelete, request, response, next, requestBody, requestParam } from 'inversify-express-utils';
 import { IUser } from '../../models/user';
-import { JsonWebTokenService } from '../../../services/jwt';
+import { JsonWebTokenService } from '../../services/jwt';
 import { TYPES } from '../../../constants';
 
 interface AuthResponse {
