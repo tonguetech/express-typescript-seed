@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { set, connect, connection, Connection } from 'mongoose';
-import { TYPES } from '../../constants';
+import { TYPES } from '../../../constants';
 import { YamlConfig } from '../yaml/';
 
 @injectable()

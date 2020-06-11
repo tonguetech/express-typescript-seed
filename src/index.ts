@@ -14,14 +14,14 @@ import { AuthMiddleware } from './express/middleware';
 import { UserRepository } from './express/repository/user';
 import { ErrorDescriptionRepository } from './express/repository/error';
 // import other services
-import { Config, YamlConfig } from './services/yaml';
-import { DateTimeService } from './services/datetime';
-import { ErrorHandlerService } from './services/error';
-import { GoogleMapService } from './services/googlemap';
-import { JsonWebTokenService } from './services/jwt';
-import { PassportService } from './services/passport';
-import { MailerService } from './services/mailer';
-import { MongoDbService } from './services/mongodb';
+import { Config, YamlConfig } from './express/services/yaml';
+import { DateTimeService } from './express/services/datetime';
+import { ErrorHandlerService } from './express/services/error';
+import { GoogleMapService } from './express/services/googlemap';
+import { JsonWebTokenService } from './express/services/jwt';
+import { PassportService } from './express/services/passport';
+import { MailerService } from './express/services/mailer';
+import { MongoDbService } from './express/services/mongodb';
 import { TYPES } from './constants';
 // import the controller
 import './express/controllers/auth';

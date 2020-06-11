@@ -4,10 +4,10 @@ import passport from 'passport';
 import passportLocal from 'passport-local';
 import passportFacebookToken from 'passport-facebook-token';
 import { Logger } from 'winston';
-import { IUser } from '../../express/models/user';
+import { IUser } from '../../../express/models/user';
 import { UserRepository } from '../../repository/user';
-import { sleep } from '../../utils';
-import { TYPES } from '../../constants';
+import { sleep } from '../../../utils';
+import { TYPES } from '../../../constants';
 
 export interface Task {
     func: () => Promise<void>;

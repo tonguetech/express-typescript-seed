@@ -3,7 +3,7 @@ import { Response, NextFunction } from 'express';
 import { Logger } from 'winston';
 import { BaseMiddleware } from 'inversify-express-utils';
 import { TYPES } from '../../constants';
-import { JsonWebTokenService } from '../../services/jwt';
+import { JsonWebTokenService } from '../../express/services/jwt';
 import { UserRepository } from '../repository/user';
 import { IUserRequest } from '../interfaces/user';
 

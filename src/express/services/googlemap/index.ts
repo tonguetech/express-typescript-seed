@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
 import { GoogleMapsClientWithPromise, createClient } from '@google/maps';
 import { YamlConfig } from '../../services/yaml';
-import { TYPES } from '../../constants';
+import { TYPES } from '../../../constants';
 
 export interface LagLngResponse {
     lat?: number,

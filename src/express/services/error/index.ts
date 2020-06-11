@@ -1,7 +1,7 @@
 import { injectable, inject } from 'inversify';
-import { TYPES } from '../../constants';
-import { IErrorDescription, ErrorCode } from '../../express/models/error';
-import { ErrorDescriptionRepository } from '../../express/repository/error';
+import { TYPES } from '../../../constants';
+import { IErrorDescription, ErrorCode } from '../../../express/models/error';
+import { ErrorDescriptionRepository } from '../../../express/repository/error';
 
 interface ErrorResponse {
     readonly status: number,

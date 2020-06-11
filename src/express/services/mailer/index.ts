@@ -4,7 +4,7 @@ import Mail from 'nodemailer/lib/mailer';
 import mustache from 'mustache';
 import { Logger } from 'winston';
 import { inject, injectable } from 'inversify';
-import { TYPES } from '../../constants';
+import { TYPES } from '../../../constants';
 import { YamlConfig, MailerConfig } from '../../services/yaml';
 
 @injectable()

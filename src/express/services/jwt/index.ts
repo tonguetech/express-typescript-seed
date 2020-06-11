@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import * as jwt from 'jsonwebtoken';
 import { YamlConfig } from '../../services/yaml';
-import { TYPES } from '../../constants';
+import { TYPES } from '../../../constants';
 
 interface JwtDataFormat {
     data: string,
