@@ -1,5 +1,7 @@
+import { injectable } from 'inversify';
 import ErrorDescription, { IErrorDescription, ErrorCode } from '../../models/error';
 
+@injectable()
 export class ErrorDescriptionRepository {
 
     public constructor() {}
