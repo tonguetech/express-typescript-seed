@@ -25,7 +25,7 @@ export class Config {
         return resolve(content);
       });
     });
-    this.config = yaml.safeLoad(content);
+    this.config = yaml.load(content);
   }
 
   public async getConfig(): Promise<YamlConfig> {
@@ -41,6 +41,7 @@ export interface YamlConfig {
   jwt: JwtConfig,
   mailer: MailerConfig,
   mongodb: MongoConfig,
+  oauth: OAuthConfig
 }
 
 export interface JwtConfig {
@@ -65,4 +66,8 @@ export interface MongoConfig {
   password?: string,
   dbName: string,
   replicaSetName?: string
+}
+
+export interface OAuthConfig {
+  facebook: boolean, // whether to enable facebook oauth
 }

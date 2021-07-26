@@ -15,3 +15,6 @@ mongodb:
   host: 'localhost'
   port: 27017
   dbName: 'testdb'
+
+oauth:
+  facebook: false

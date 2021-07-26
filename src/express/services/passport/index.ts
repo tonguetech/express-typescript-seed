@@ -3,12 +3,18 @@ import * as bcrypt from 'bcrypt';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import passportFacebookToken from 'passport-facebook-token';
-import { Logger } from 'winston';
+import { config, Logger } from 'winston';
 import { IUser } from '../../../express/models/user';
 import { UserRepository } from '../../repository/user';
 import { sleep } from '../../../utils';
+import { YamlConfig } from '../../services/yaml';
 import { TYPES } from '../../../constants';
 
+export interface PassportUser extends Express.User {
+    email: string,
+    fullName: string,
+    _id: string,
+}
 export interface Task {
     func: () => Promise<void>;
 }
@@ -16,14 +22,17 @@ export interface Task {
 @injectable()
 export class PassportService {
 
+    private config: YamlConfig;
     private queue: Task[];
     private userRepo: UserRepository;
     private logger: Logger;
 
     public constructor(
+        @inject(TYPES.Config) config: YamlConfig,
         @inject(TYPES.UserRepository) userRepo: UserRepository,
         @inject(TYPES.WinstonLogger) logger: Logger,
     ) {
+        this.config = config;
         this.queue = [];
         this.userRepo = userRepo;
         this.logger = logger;
@@ -55,7 +64,7 @@ export class PassportService {
 
     public init() {
         // Take user object, store information in a session
-        passport.serializeUser((user: IUser, done: any) => {
+        passport.serializeUser((user: Express.User, done: any) => {
             // @ts-ignore
             done(undefined, user._id);
         });
@@ -94,11 +103,10 @@ export class PassportService {
                         });
                     }
                 }
-                const returnUser = {
+                const returnUser = <PassportUser> {
                     email: user.email,
                     fullName: user.fullName,
-                    // @ts-ignore
-                    _id: user._id
+                    _id: user._id,
                 };
                 return done(null, returnUser, {
                     message: 'Logged In Successfully'
@@ -121,7 +129,7 @@ export class PassportService {
                             await bcrypt.hash(password, 10)
                         ))!;
 
-                        const result = {
+                        const result = <PassportUser> {
                             email: updatedUser.email,
                             fullName: updatedUser.fullName,
                             _id: updatedUser.username
@@ -129,11 +137,10 @@ export class PassportService {
                         return done(null, result, { message: 'You were already registered with Facebook but we added the password to your account and assigned a username.  You can login either way now' });
 
                     } else {
-                        const result = {
+                        const result = <PassportUser> {
                             email: user.email,
                             fullName: user.fullName,
-                            // @ts-ignore
-                            _id: user._id
+                            _id: user._id,
                         };
                         return done(null, result, { message: 'User already exists' });
                     }
@@ -147,7 +154,7 @@ export class PassportService {
                         };
                         try {
                             const newUser = await this.userRepo.createNewUser(userObj);
-                            const result = {
+                            const result = <PassportUser> {
                                 email: newUser.email,
                                 fullName: newUser.fullName,
                                 _id: newUser.username
@@ -166,45 +173,47 @@ export class PassportService {
             }
         })));
 
-        // Register/Login a user via Facebook
-        const FacebookTokenStrategy = passportFacebookToken;
-        passport.use(new FacebookTokenStrategy({
-            clientID: process.env.FACEBOOK_APP_ID!,
-            clientSecret: process.env.FACEBOOK_APP_SECRET!,
-            // Get additional fields.  All fields available at https://developers.facebook.com/docs/graph-api/reference/v2.7/user
-            profileFields: ['email', 'picture', 'name']
-        },
-            (async (accessToken, refreshToken, profile, done) => {
-                const user = await this.userRepo.findUserByFacebookId(profile.id);
-                // No user found, then create an account
-                if (!user) {
-                    const fullName = profile.name.givenName + ' ' + profile.name.familyName;
-                    const userObj = <IUser>{
-                        facebookId: profile.id,
-                        email: profile.emails[0].value,
-                        fullName
-                    };
-                    const newUser = await this.userRepo.createNewUser(userObj);
-                    // Create object to send back
-                    const returnUser = {
-                        email: newUser.email,
-                        fullName: newUser.fullName,
-                        _id: newUser.username
-                    };
-                    return done(null, returnUser, { message: 'Facebook user created' });
-                } else {
-                    // Found an account, link account to Facebook ID
-                    // @ts-ignore
-                    const updatedUser = (await this.userRepo.updateEmailAndFacebookIdById(user._id, profile.id, user.email))!;
-                    // Create object to send back
-                    const returnUser = {
-                        email: updatedUser.email,
-                        fullName: updatedUser.fullName,
-                        _id: updatedUser.username
-                    };
-                    return done(null, returnUser, { message: 'User already registered, linked Facebook account' });
-                }
-            })
-        ));
+        if (this.config.oauth.facebook) {
+            // Register/Login a user via Facebook
+            const FacebookTokenStrategy = passportFacebookToken;
+            passport.use(new FacebookTokenStrategy({
+                clientID: process.env.FACEBOOK_APP_ID!,
+                clientSecret: process.env.FACEBOOK_APP_SECRET!,
+                // Get additional fields.  All fields available at https://developers.facebook.com/docs/graph-api/reference/v2.7/user
+                profileFields: ['email', 'picture', 'name']
+            },
+                (async (accessToken, refreshToken, profile, done) => {
+                    const user = await this.userRepo.findUserByFacebookId(profile.id);
+                    // No user found, then create an account
+                    if (!user) {
+                        const fullName = profile.name.givenName + ' ' + profile.name.familyName;
+                        const userObj = <IUser>{
+                            facebookId: profile.id,
+                            email: profile.emails[0].value,
+                            fullName
+                        };
+                        const newUser = await this.userRepo.createNewUser(userObj);
+                        // Create object to send back
+                        const returnUser = <PassportUser> {
+                            email: newUser.email,
+                            fullName: newUser.fullName,
+                            _id: newUser.username,
+                        };
+                        return done(null, returnUser, { message: 'Facebook user created' });
+                    } else {
+                        // Found an account, link account to Facebook ID
+                        // @ts-ignore
+                        const updatedUser = (await this.userRepo.updateEmailAndFacebookIdById(user._id, profile.id, user.email))!;
+                        // Create object to send back
+                        const returnUser = <PassportUser> {
+                            email: updatedUser.email,
+                            fullName: updatedUser.fullName,
+                            _id: updatedUser.username,
+                        };
+                        return done(null, returnUser, { message: 'User already registered, linked Facebook account' });
+                    }
+                })
+            ));
+        }
     }
 }
