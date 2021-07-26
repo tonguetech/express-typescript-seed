@@ -2,12 +2,16 @@ import 'reflect-metadata';
 import morgan from 'morgan';
 import passport from 'passport';
 import cors from 'cors';
+import swaggerUi from 'swagger-ui-express'
 import * as express from 'express';
 import { createLogger, format, transports, Logger, LoggerOptions } from 'winston';
 import { Application, Request, Response, NextFunction } from 'express';
 import { InversifyExpressServer } from 'inversify-express-utils';
 import { Container } from 'inversify';
 import * as bodyParser from 'body-parser';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as yaml from 'js-yaml';
 // import the middleware
 import { AuthMiddleware } from './express/middleware';
 // import the DAO class
@@ -86,14 +90,23 @@ const logger: Logger = createLogger(<LoggerOptions>{
 
     // start the express server
     const server = new InversifyExpressServer(container);
-    server.setConfig((app: Application) => {
+    server.setConfig(async (app: Application) => {
         // set cors
         if (process.env.NODE_ENV == 'development') {
             app.use(cors());
         }
         // set up swagger
-        app.use('/api-docs/swagger/', express.static(__dirname + '/static/swagger'));
-        app.use('/api-docs/swagger/assets', express.static(process.cwd() + '/node_modules/swagger-ui-dist'));
+        const content = await new Promise<string>((resolve, reject) => {
+            fs.readFile(path.resolve(process.cwd(), "./static/swagger/swagger.yaml"), 'utf8', (err, content) => {
+                if (err) {
+                  return reject(err);
+                }
+                return resolve(content);
+              });
+        });
+        const swaggerDoc = yaml.load(content);
+        app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+        //app.use('/api-docs/swagger/assets', express.static(process.cwd() + '/node_modules/swagger-ui-dist'));
         // set the body parser
         app.use(bodyParser.urlencoded({
             extended: true
