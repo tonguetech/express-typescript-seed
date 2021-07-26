@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Logger } from 'winston';
-import { GoogleMapsClientWithPromise, createClient } from '@google/maps';
+import { Client, GeocodeRequest } from '@googlemaps/google-maps-services-js';
 import { YamlConfig } from '../../services/yaml';
 import { TYPES } from '../../../constants';
 
@@ -13,34 +13,43 @@ export interface LagLngResponse {
 @injectable()
 export class GoogleMapService {
 
-    private googleApiClient: GoogleMapsClientWithPromise;
+    private googleApiClient: Client;
+    private googleApiKey?: string;
     private logger: Logger;
 
     public constructor(
-        @inject(TYPES.Config) config: YamlConfig,
         @inject(TYPES.WinstonLogger) logger: Logger,
     ) {
-        this.googleApiClient = createClient({
-            key: "<google-api-token>",
-            language: 'zh-TW',
-            Promise: Promise
-        });
+        this.googleApiClient = new Client({});
+        this.googleApiKey = process.env.GOOGLE_MAPS_API_KEY || undefined;
         this.logger = logger;
     }
 
     public async getAddressLatLng(address: string): Promise<LagLngResponse> {
-        const response = await this.googleApiClient.geocode({ address }).asPromise();
-        if (response.json.results.length >= 1) {
+        if (!this.googleApiKey) {
+            throw new Error("Environment variable GOOGLE_MAPS_API_KEY is not set");
+        }
+
+        const params = <GeocodeRequest> {
+            params: {
+                address,
+                components: "country:US",
+                key: this.googleApiKey,
+            },
+        };
+
+        const response = await this.googleApiClient.geocode(params);
+        if (response.data.results.length >= 1) {
             return <LagLngResponse>{
-                lat: response.json.results[0].geometry.location.lat,
-                lng: response.json.results[0].geometry.location.lng,
-                jsonResponse: JSON.parse(JSON.stringify(response.json))
-            }
+                lat: response.data.results[0].geometry.location.lat,
+                lng: response.data.results[0].geometry.location.lng,
+                jsonResponse: JSON.parse(JSON.stringify(response.data))
+            };
         } else {
-            this.logger.warn(`Google map API does not return a latitude and longitude for the address: ${address}`)
+            this.logger.warn(`Google map API does not return a latitude and longitude for the address: ${address}`);
             return <LagLngResponse>{
-                jsonResponse: JSON.parse(JSON.stringify(response.json))
-            }
+                jsonResponse: JSON.parse(JSON.stringify(response.data))
+            };
         }
     }
 
