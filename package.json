@@ -35,7 +35,7 @@
   },
   "dependencies": {
     "@google/maps": "^0.5.5",
-    "axios": "^0.18.0",
+    "axios": ">=0.21.1",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
@@ -50,7 +50,7 @@
     "mongoose": "^5.6.8",
     "morgan": "^1.9.1",
     "mustache": "^3.0.1",
-    "nodemailer": "^5.1.1",
+    "nodemailer": ">=6.6.3",
     "nodemon": "^2.0.4",
     "passport": "^0.4.0",
     "passport-facebook-token": "^3.3.0",
