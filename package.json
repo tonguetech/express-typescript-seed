@@ -36,7 +36,7 @@
   "dependencies": {
     "@google/maps": "^0.5.5",
     "axios": "^0.18.0",
-    "bcrypt": "^3.0.6",
+    "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "express": "^4.16.4",
